@@ -26,6 +26,11 @@ my %from_bool = (
 	'True'	=>	1
 );
 
+my %to_bool = (
+	0	=>	'false',
+	1	=>	'true'
+);
+
 sub new {
 	my $class = shift;
 	my $self;
