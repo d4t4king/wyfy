@@ -35,9 +35,6 @@ sub new {
 	} elsif ((scalar(@_) == 3) and (ref($_[2]) eq 'HASH')) {
 		$self->{'bssid'} = shift if (&_is_mac($_[0]));
 		$self->{'essid'} = shift;
-		print color("bold yellow");
-		print Dumper($_[0]);
-		print color("reset");
 		foreach my $k ( keys %{$_[0]} ) {
 			next if ($k eq 'BSSID');
 			if ($k eq 'manuf') {
@@ -48,7 +45,16 @@ sub new {
 						my $wcli = Wireless::Client->new($wc->{'client-mac'}, $wc);
 						push @{$self->{'clients'}}, $wcli;
 					}
+				} elsif ((!defined($self->{$k})) or ($self->{$k} eq "")) {
+					$self->{$k} = undef;
+				} else {
+					#my $wcli = Wireless::Client->new($self->{'wireless-client'}{'client-mac'}, $self->{'wireless-client'});
+					#push @{$self->{'clients'}}, $wcli;
+					print Dumper($self->{$k});
+					die colored("error", "bold red");
 				}
+			#} elsif ($k eq 'freqmhz') {
+			#	$self->{$k} =~ s/ /./;
 			} else {
 				$self->{$k} = $_[0]->{$k};
 			}
@@ -148,7 +154,7 @@ sub encryption {
 
 sub max_rate {
 	my $self = shift;
-	return $elf->{'SSID'}{'max-rate'};
+	return $self->{'SSID'}{'max-rate'};
 }
 
 sub is_cloaked {
@@ -164,6 +170,32 @@ sub frequency {
 sub signal_to_noise_ratio_info {
 	my $self = shift;
 	return $self->{'snr-info'};
+}
+
+sub client_count {
+	my $self = shift;
+	if ((!defined($self->{'clients'})) or ($self->{'clients'} eq "")) {
+		return 0;
+	} else {
+		if (ref($self->{'clients'}) eq 'ARRAY') {
+			return scalar(@{$self->{'clients'}});
+		} else {
+			die colored("Clients object not an array! \n", "bold red");
+		}
+	}
+}
+
+sub clients {
+	my $self = shift;
+	if ((!defined($self->{'clients'})) or ($self->{'clients'} eq "")) {
+		return [];
+	} else {
+		if (ref($self->{'clients'}) eq 'ARRAY') {			
+			return @{$self->{'clients'}};
+		} else {
+			die colored("Client object not an array! \n", "bold red");
+		}
+	}
 }
 
 1;
