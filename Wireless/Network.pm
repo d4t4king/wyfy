@@ -1,4 +1,32 @@
+
+###############################################################################
+##									     ##
+##	Copyright (c) 2016 by Charlie Heselton				     ##
+##	All rights reserved.						     ##
+##									     ##
+##	This package is free doftware; you can redistribute it 		     ##
+##	and/or modify it under the same terms as Perl itself.		     ##
+##									     ##
+###############################################################################
+#
 package Wireless::Network;
+
+
+=pod 
+
+=head1 NAME
+
+Wireless::Network
+
+=head1 VERSION
+
+This man page documents "Wireless::Network" version 0.0.1.
+
+=head1 SYNOPSIS
+
+This package attempts to objectify a wireless network described in the *.netxml output of wireless analysis tools like kismet and airodump-ng.
+
+=cut 
 
 use strict;
 use warnings;
@@ -82,6 +110,12 @@ sub _is_mac {
 	}
 }
 
+=pod 
+
+=head1 PROPERTIES
+
+=cut
+
 sub first_time {
 	my $self = shift;
 	return $self->{'first-time'};
@@ -162,11 +196,6 @@ sub max_rate {
 	return $self->{'SSID'}{'max-rate'};
 }
 
-sub is_cloaked {
-	my $self = shift;
-	return $from_bool{$self->{'SSID'}{'essid'}{'cloaked'}};
-}
-
 sub frequency {
 	my $self = shift;
 	return $self->{'freqmhz'};
@@ -175,6 +204,31 @@ sub frequency {
 sub signal_to_noise_ratio_info {
 	my $self = shift;
 	return $self->{'snr-info'};
+}
+
+
+sub clients {
+	my $self = shift;
+	if ((!defined($self->{'clients'})) or ($self->{'clients'} eq "")) {
+		return [];
+	} else {
+		if (ref($self->{'clients'}) eq 'ARRAY') {			
+			return @{$self->{'clients'}};
+		} else {
+			die colored("Client object not an array! \n", "bold red");
+		}
+	}
+}
+
+=pod 
+
+=head1 METHODS
+
+=cut
+
+sub is_cloaked {
+	my $self = shift;
+	return $from_bool{$self->{'SSID'}{'essid'}{'cloaked'}};
 }
 
 sub client_count {
@@ -190,17 +244,35 @@ sub client_count {
 	}
 }
 
-sub clients {
-	my $self = shift;
-	if ((!defined($self->{'clients'})) or ($self->{'clients'} eq "")) {
-		return [];
-	} else {
-		if (ref($self->{'clients'}) eq 'ARRAY') {			
-			return @{$self->{'clients'}};
-		} else {
-			die colored("Client object not an array! \n", "bold red");
-		}
-	}
-}
+=pod 
+
+=head1 AUTHOR
+
+=begin html
+
+<div class="codeblock">
+	<pre>
+		Charlie Heselton
+		mailto:charles.heselton [at] gmail [dot] com
+	</pre>
+</div>
+
+=end html
+
+=head1 COPYRIGHT
+
+Copyright (c) 2016 by Charlie Heselton.  All rights reserved.
+
+=head1 LICENSE
+
+This package is free software; you can use, modify and redistribute it under the same terms as Perl itself, i.e., at your option, under the terms either of the "Artistic License" or the "GNU General Public License".
+
+=head1 DISCLAIMER
+
+This package is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the "GNU General Public License" for more details.
+
+=cut
 
 1;
