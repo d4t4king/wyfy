@@ -8,8 +8,8 @@ use Data::Dumper;
 
 require Exporter;
 
-our @EXPORT		= qw( new mac_address );
-our @EXPORT_OK	= qw( );
+our @EXPORT		= qw( new mac_address first_time last_time channel signal_to_noise_ratio_info type packet_fragments crypto_packets packet_retries data_packets llc_packets total_packets manufacturer number max_seen_rate );
+our @EXPORT_OK		= qw( );
 {
 	$Wireless::Client::VERSION = '0.0.1';
 }
@@ -26,9 +26,9 @@ sub new {
 	} elsif (scalar(@_) == 2) {
 		if (ref($_[1]) eq 'HASH') {
 			$self->{'mac_address'} = shift if (&_is_mac($_[0]));
-			print color("bold yellow");
-			print Dumper($_[0]);
-			print color('reset');
+			#print color("bold yellow");
+			#print Dumper($_[0]);
+			#print color('reset');
 			foreach my $k ( keys %{$_[0]} ) {
 				next if ($k eq 'client-mac');
 				if ($k eq 'client-manuf') {
@@ -83,6 +83,56 @@ sub channel {
 sub signal_to_noise_ratio_info {
 	my $self = shift;
 	return $self->{'snr_info'};
+}
+
+sub type {
+	my $self = shift;
+	return $self->{'type'};
+}
+
+sub manufacturer {
+	my $self = shift;
+	return $self->{'manufacturer'};
+}
+
+sub number {
+	my $self = shift;
+	return $self->{'nunmber'};
+}
+
+sub max_seen_rate {
+	my $self = shift;
+	return $self->{'maxseenrate'};
+}
+
+sub packet_fragments {
+	my $self = shift;
+	return $self->{'packets'}{'fragments'};
+}
+
+sub crypto_packets {
+	my $self = shift;
+	return $self->{'packets'}{'crypt'};
+}
+
+sub packet_retries {
+	my $self = shift;
+	return $self->{'packets'}{'retries'};
+}
+
+sub data_packets {
+	my $self = shift;
+	return $self->{'packets'}{'data'};
+}
+
+sub llc_packets {
+	my $self = shift;
+	return $self->{'packets'}{'LLC'};
+}
+
+sub total_packets {
+	my $self = shift;
+	return $self->{'packets'}{'total'};
 }
 
 1;
