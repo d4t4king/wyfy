@@ -63,36 +63,45 @@ sub new {
 	my $class = shift;
 	my $self;
 	if (scalar(@_) == 2) {
+		#print "Got 2 parameters\n";
 		$self->{'bssid'} = shift if (&_is_mac($_[0]));
 		$self->{'essid'} = shift;
-	} elsif ((scalar(@_) == 3) and (ref($_[2]) eq 'HASH')) {
-		$self->{'bssid'} = shift if (&_is_mac($_[0]));
-		$self->{'essid'} = shift;
-		foreach my $k ( keys %{$_[0]} ) {
-			next if ($k eq 'BSSID');
-			print colored("$k", "bold yellow"); print "\n";
-			if ($k eq 'manuf') {
-				$self->{'manufacturer'} = $_[0]->{$k};
-			} elsif ($k eq 'wireless-client') {
-				if (ref($k) eq 'ARRAY') {
-					foreach my $wc ( @{$k} ) {
-						my $wcli = Wireless::Client->new($wc->{'client-mac'}, $wc);
-						print Dumper($wcli);
-						push @{$self->{'clients'}}, $wcli;
+	} elsif (scalar(@_) == 3) {
+		#print "Got 3 parameters\n";
+		if (ref($_[2]) eq 'HASH') {
+			$self->{'bssid'} = $_[0] if (&_is_mac($_[0]));
+			$self->{'essid'} = $_[1];
+			foreach my $k ( keys %{$_[2]} ) {
+				next if ($k eq 'BSSID');
+				#print colored("$k", "bold cyan"); print "\n";
+				if ($k eq 'manuf') {
+					$self->{'manufacturer'} = $_[2]->{$k};
+				} elsif ($k eq 'wireless-client') {
+					if (ref($_[2]->{$k}) eq 'ARRAY') {
+						foreach my $wc ( @{$_[2]->{$k}} ) {
+							my $wcli = Wireless::Client->new($wc->{'client-mac'}, $wc);
+							#print color("bold green"); print Dumper($wcli); print color("reset");
+							push @{$self->{'clients'}}, $wcli;
+						}
+					#} elsif ((!defined($self->{$k})) or ($self->{$k} eq "")) {
+					#	$self->{$k} = undef;
+					} else {
+						#my $wcli = Wireless::Client->new($self->{'wireless-client'}{'client-mac'}, $self->{'wireless-client'});
+						#push @{$self->{'clients'}}, $wcli;
+						warn colored("Wireless client object not an array!", "bold red");
+						print color("bold red");
+						print ref($k);
+						print Dumper($k);
+						print color("reset");
 					}
-				#} elsif ((!defined($self->{$k})) or ($self->{$k} eq "")) {
-				#	$self->{$k} = undef;
+				#} elsif ($k eq 'freqmhz') {
+				#	$self->{$k} =~ s/ /./;
 				} else {
-					my $wcli = Wireless::Client->new($self->{'wireless-client'}{'client-mac'}, $self->{'wireless-client'});
-					push @{$self->{'clients'}}, $wcli;
-					print Dumper($self->{$k});
-					die colored("error", "bold red");
+					$self->{$k} = $_[2]->{$k};
 				}
-			#} elsif ($k eq 'freqmhz') {
-			#	$self->{$k} =~ s/ /./;
-			} else {
-				$self->{$k} = $_[0]->{$k};
 			}
+		} else {
+			die colored("Expected a HASH and got ".ref($_[2])." for 3rd parameter.\n", "bold red");
 		}
 	} else {
 		die colored(scalar(@_)." elements in \@_", "bold yellow");
