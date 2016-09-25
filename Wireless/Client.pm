@@ -23,20 +23,24 @@ sub new {
 	if (scalar(@_) == 1) {
 		# must be the MAC
 		$self->{'mac_address'} = shift if (&_is_mac($_[0]));
-	} elsif ((scalar(@_) == 2) and (ref($_[1]) eq 'HASH')) {
-		$self->{'mac_address'} = shift if (&_is_mac($_[0]));
-		print color("bold yellow");
-		print Dumper($_[0]);
-		print color('reset');
-		foreach my $k ( keys %{$_[0]} ) {
-			next if ($k eq 'client-mac');
-			if ($k eq 'client-manuf') {
-				$self->{'manufacturer'} = $_[0]->{$k};
-			} elsif ($k eq 'snr-info') {
-				$self->{'snr_info'} = $_[0]->{$k};
-			} else {
-				$self->{$k} = $_[0]->{$k};
+	} elsif (scalar(@_) == 2) {
+		if (ref($_[1]) eq 'HASH') {
+			$self->{'mac_address'} = shift if (&_is_mac($_[0]));
+			print color("bold yellow");
+			print Dumper($_[0]);
+			print color('reset');
+			foreach my $k ( keys %{$_[0]} ) {
+				next if ($k eq 'client-mac');
+				if ($k eq 'client-manuf') {
+					$self->{'manufacturer'} = $_[0]->{$k};
+				} elsif ($k eq 'snr-info') {
+					$self->{'snr_info'} = $_[0]->{$k};
+				} else {
+					$self->{$k} = $_[0]->{$k};
+				}
 			}
+		} else {
+			die colored("Second parameter is not a hash! \n", "bold red");
 		}
 	} else {
 		die colored(scalar(@_)." elements in \@_\n", "bold red");

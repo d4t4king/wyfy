@@ -8,7 +8,7 @@
 ##	and/or modify it under the same terms as Perl itself.		     ##
 ##									     ##
 ###############################################################################
-#
+
 package Wireless::Network;
 
 
@@ -70,19 +70,21 @@ sub new {
 		$self->{'essid'} = shift;
 		foreach my $k ( keys %{$_[0]} ) {
 			next if ($k eq 'BSSID');
+			print colored("$k", "bold yellow"); print "\n";
 			if ($k eq 'manuf') {
 				$self->{'manufacturer'} = $_[0]->{$k};
 			} elsif ($k eq 'wireless-client') {
 				if (ref($k) eq 'ARRAY') {
 					foreach my $wc ( @{$k} ) {
 						my $wcli = Wireless::Client->new($wc->{'client-mac'}, $wc);
+						print Dumper($wcli);
 						push @{$self->{'clients'}}, $wcli;
 					}
-				} elsif ((!defined($self->{$k})) or ($self->{$k} eq "")) {
-					$self->{$k} = undef;
+				#} elsif ((!defined($self->{$k})) or ($self->{$k} eq "")) {
+				#	$self->{$k} = undef;
 				} else {
-					#my $wcli = Wireless::Client->new($self->{'wireless-client'}{'client-mac'}, $self->{'wireless-client'});
-					#push @{$self->{'clients'}}, $wcli;
+					my $wcli = Wireless::Client->new($self->{'wireless-client'}{'client-mac'}, $self->{'wireless-client'});
+					push @{$self->{'clients'}}, $wcli;
 					print Dumper($self->{$k});
 					die colored("error", "bold red");
 				}
