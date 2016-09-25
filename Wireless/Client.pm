@@ -97,7 +97,7 @@ sub manufacturer {
 
 sub number {
 	my $self = shift;
-	return $self->{'nunmber'};
+	return $self->{'number'};
 }
 
 sub max_seen_rate {
