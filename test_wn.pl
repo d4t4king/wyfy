@@ -12,12 +12,13 @@ use lib './';
 use Wireless::Client;
 use Wireless::Network;
 
-my ($help,$verbose,$input);
-$verbose = 0;
+my ($help,$verbose,$input,$one);
+$verbose = 0; $one = 0;
 GetOptions(
 	'h|help'		=>	\$help,
-	'v|verbose+'	=>	\$verbose,
+	'v|verbose+'		=>	\$verbose,
 	'i|input=s'		=>	\$input,
+	'1|one'			=>	\$one
 );
 
 &usage if ($help);
@@ -28,29 +29,54 @@ if ((!defined($input)) or ($input eq "")) {
 
 my $xdoc = XMLin($input);
 
-foreach my $net ( @{$xdoc->{'wireless-network'}} ) {
-	my $wnet = Wireless::Network->new($net->{'BSSID'}, $net->{'SSID'}{'essid'}{'content'}, $net);
-	print colored("ESSID: ", "bold green"); print colored($wnet->essid."\n", "magenta");
-	print colored("BSSID: ", "bold green"); print colored($wnet->bssid."\n", "magenta");
-	print colored("First Time: ", "bold green"); print colored($wnet->first_time."\n", "cyan");
-	print colored("Last Time: ", "bold green"); print colored($wnet->last_time."\n", "cyan");
-	print colored("Type: ", "bold green"); print colored($wnet->type."\n", "magenta");
-	print colored("Manufacturer: ", "bold green"); print colored($wnet->manufacturer."\n", "magenta");
-	print colored("Number: ", "bold green"); print colored($wnet->number."\n", "red");
-	print colored("Channel: ", "bold green"); print colored($wnet->channel."\n", "red");
-	print colored("Data Packets: ", "bold green"); print colored($wnet->data_packets."\n", "red");
-	print colored("LLC Packets: ", "bold green"); print colored($wnet->llc_packets."\n", "red");
-	print colored("Packet Retries: ", "bold green"); print colored($wnet->retry_packets."\n", "red");
-	print colored("Packet Fragments: ", "bold green"); print colored($wnet->packet_fragments."\n", "red");
-	print colored("Total Packets: ", "bold green"); print colored($wnet->total_packets."\n", "red");
-	print colored("Crypto Packets: ", "bold green"); print colored($wnet->crypto_packets."\n", "red");
-	print colored("Encryption: ", "bold green"); print colored($wnet->encryption."\n", "magenta");
-	print colored("Max Rate: ", "bold green"); print colored($wnet->max_rate."\n", "magenta");
-	print colored("Is Cloaked: ", "bold green"); print colored($wnet->is_cloaked."\n", "red");
-	print colored("Frequency: ", "bold green"); print colored($wnet->frequency."\n", "magenta");
-	print colored("Client count: ", "bold green"); print colored($wnet->client_count."\n", "red");
-	print colored("Clients: \n", "bold green");
-	print colored(Dumper($wnet->clients), "yellow");
+if (ref($xdoc->{'wireless-network'}) eq 'ARRAY') {
+	foreach my $net ( @{$xdoc->{'wireless-network'}} ) {
+		if ($verbose) {
+			print color("bold yellow");
+			print Dumper($net);
+			print color("reset");
+		}
+		my $wnet;
+		if (!defined($net->{'SSID'}{'essid'}{'content'})) {
+			$wnet = Wireless::Network->new($net->{'BSSID'}, "NONE", $net);
+		} else {
+			$wnet = Wireless::Network->new($net->{'BSSID'}, $net->{'SSID'}{'essid'}{'content'}, $net);
+		}
+		if ($verbose) {
+			print color("bold magenta");
+			print Dumper($wnet);
+			print color("reset");
+		}
+		printf "%-40s %-s\n", colored("ESSID: ", "bold green"), colored($wnet->essid, "magenta");
+		printf "%-40s %-s\n", colored("BSSID: ", "bold green"), colored($wnet->bssid, "magenta");
+		printf "%-40s %-s\n", colored("First Time: ", "bold green"), colored($wnet->first_time, "cyan");
+		printf "%-40s %-s\n", colored("Last Time: ", "bold green"), colored($wnet->last_time, "cyan");
+		printf "%-40s %-s\n", colored("Type: ", "bold green"), colored($wnet->type, "magenta");
+		printf "%-40s %-s\n", colored("Manufacturer: ", "bold green"), colored($wnet->manufacturer, "magenta");
+		printf "%-40s %-s\n", colored("Number: ", "bold green"), colored($wnet->number, "red");
+		printf "%-40s %-s\n", colored("Channel: ", "bold green"), colored($wnet->channel, "red");
+		printf "%-40s %-s\n", colored("Data Packets: ", "bold green"), colored($wnet->data_packets, "red");
+		printf "%-40s %-s\n", colored("LLC Packets: ", "bold green"), colored($wnet->llc_packets, "red");
+		printf "%-40s %-s\n", colored("Packet Retries: ", "bold green"), colored($wnet->retry_packets, "red");
+		printf "%-40s %-s\n", colored("Packet Fragments: ", "bold green"), colored($wnet->packet_fragments, "red");
+		printf "%-40s %-s\n", colored("Total Packets: ", "bold green"), colored($wnet->total_packets, "red");
+		printf "%-40s %-s\n", colored("Crypto Packets: ", "bold green"), colored($wnet->crypto_packets, "red");
+		printf "%-40s %-s\n", colored("Encryption: ", "bold green"), colored($wnet->encryption, "magenta");
+		printf "%-40s %-s\n", colored("Max Rate: ", "bold green"), colored($wnet->max_rate, "magenta");
+		printf "%-40s %-s\n", colored("Is Cloaked: ", "bold green"), colored($wnet->is_cloaked, "red");
+		printf "%-40s %-s\n", colored("Frequency: ", "bold green"), colored($wnet->frequency, "magenta");
+		printf "%-40s %-s\n", colored("Client count: ", "bold green"), colored($wnet->client_count, "red");
+		printf colored("Clients: \n", "bold green");
+		print color("yellow"); print Dumper($wnet->clients); print color("reset");
+		last if ($one);
+	}
+} else {
+	warn colored("Wireless network object is not an array!", "bold red");
+	print color("bold red");
+	print ref($xdoc->{'wireless-network'})."\n";
+	print Dumper($xdoc->{'wireless-network'});
+	print color("reset");
+	exit 254;
 }
 
 ###############################################################################
