@@ -114,12 +114,24 @@ sub _is_mac {
 
 =head1 PROPERTIES
 
+=head2 first_time
+
+Shows the datetime for the initial observation of the network
+
 =cut
 
 sub first_time {
 	my $self = shift;
 	return $self->{'first-time'};
 }
+
+=pod
+
+=head2 last_time
+
+Shows the datetime for the last observation of the network
+
+=cut 
 
 sub last_time {
 	my $self = shift;
