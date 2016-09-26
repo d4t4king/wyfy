@@ -27,11 +27,15 @@ sub parsefile {
 				'kismet_version'	=>	$xdoc->{'kismet-version'},
 				'start_time'		=>	$xdoc->{'start-time'}
 			};
+			if (exists($xdoc->{'card-source'})) {
+				my $card = NetXML::Wireless::Card->new($xdoc->{'card-source'}{'uuid'}, $xdoc->{'card-source'});
+				$self->{'source-card'} = $card;
+			}
             if (ref($xdoc->{'wireless-network'}) eq 'ARRAY') {
                 foreach my $net ( @{$xdoc->{'wireless-network'}} ) {
                     my $wnet;
                     if (!defined($net->{'SSID'}{'essid'}{'content'})) {
-                        $wnet = NetXML::Wireless::Network->new($net->{'BSSID'}, "NONE", $net);
+                        $wnet = NetXML::Wireless::Network->new($net->{'BSSID'}, "Unknown", $net);
                     } else {
                         $wnet = NetXML::Wireless::Network->new($net->{'BSSID'}, $net->{'SSID'}{'essid'}{'content'}, $net);
                     }

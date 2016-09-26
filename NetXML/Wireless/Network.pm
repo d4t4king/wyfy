@@ -93,8 +93,17 @@ sub new {
 						print color("reset");
 						exit 255;
 					}
-				#} elsif ($k eq 'freqmhz') {
-				#	$self->{$k} =~ s/ /./;
+				} elsif ($k eq 'freqmhz') {
+					if (ref($_[2]->{$k}) eq 'ARRAY') {
+						foreach my $freq ( @{$_[2]->{$k}} ) {
+							$freq =~ s/ /./;
+							if (exists($self->{$k})) { $self->{$k} .= " $freq"; }
+							else { $self->{$k} = $freq; }
+						}
+					} else {
+						$_[2]->{$k} =~ s/ /./;
+						$self->{$k} = $_[2]->{$k};
+					}
 				} else {
 					$self->{$k} = $_[2]->{$k};
 				}
@@ -210,12 +219,20 @@ sub crypto_packets {
 
 sub encryption {
 	my $self = shift;
-	return $self->{'SSID'}{'encryption'};
+	if (exists($self->{'SSID'}{'encryption'})) {
+		return $self->{'SSID'}{'encryption'};
+	} else {
+		return "Unknown";
+	}
 }
 
 sub max_rate {
 	my $self = shift;
-	return $self->{'SSID'}{'max-rate'};
+	if (exists($self->{'SSID'}{'max-rate'})) {
+		return $self->{'SSID'}{'max-rate'};
+	} else {
+		return 0;
+	}
 }
 
 sub frequency {
@@ -250,7 +267,11 @@ sub clients {
 
 sub is_cloaked {
 	my $self = shift;
-	return $from_bool{$self->{'SSID'}{'essid'}{'cloaked'}};
+	if (exists($self->{'SSID'}{'essid'}{'cloaked'})) {
+		return $from_bool{$self->{'SSID'}{'essid'}{'cloaked'}};
+	} else {
+		return $from_bool{'false'};
+	}
 }
 
 sub client_count {
