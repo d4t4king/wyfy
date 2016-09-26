@@ -73,26 +73,25 @@ sub new {
 			$self->{'essid'} = $_[1];
 			foreach my $k ( keys %{$_[2]} ) {
 				next if ($k eq 'BSSID');
-				#print colored("$k", "bold cyan"); print "\n";
 				if ($k eq 'manuf') {
 					$self->{'manufacturer'} = $_[2]->{$k};
 				} elsif ($k eq 'wireless-client') {
 					if (ref($_[2]->{$k}) eq 'ARRAY') {
 						foreach my $wc ( @{$_[2]->{$k}} ) {
 							my $wcli = NetXML::Wireless::Client->new($wc->{'client-mac'}, $wc);
-							#print color("bold green"); print Dumper($wcli); print color("reset");
 							push @{$self->{'clients'}}, $wcli;
 						}
-					#} elsif ((!defined($self->{$k})) or ($self->{$k} eq "")) {
-					#	$self->{$k} = undef;
+					} elsif (ref($_[2]->{$k}) eq 'HASH') {
+						# hash means that there is just one client
+						my $wcli = NetXML::Wireless::Client->new($_[2]->{$k}{'client-mac'}, $_[2]->{$k});
+						push @{$self->{'clients'}}, $wcli;
 					} else {
-						#my $wcli = Wireless::Client->new($self->{'wireless-client'}{'client-mac'}, $self->{'wireless-client'});
-						#push @{$self->{'clients'}}, $wcli;
-						warn colored("Wireless client object not an array!", "bold red");
+						warn colored("Wireless client object not an array or hash!", "bold red");
 						print color("bold red");
-						print ref($k);
-						print Dumper($k);
+						print "REF: ".ref($_[2]->{$k})."\n";
+						print Dumper($_[2]->{$k});
 						print color("reset");
+						exit 255;
 					}
 				#} elsif ($k eq 'freqmhz') {
 				#	$self->{$k} =~ s/ /./;

@@ -2,8 +2,13 @@
 
 use strict;
 use warnings;
+use Term::ANSIColor;
+use Data::Dumper;
 
 use lib "./";
-use Wireless::Network;
+use NetXML::Parser;
 
+my $obj = NetXML::Parser->parsefile($ARGV[0]);
 
+#print Dumper($obj);
+print "Found ".$obj->network_count." networks.\n";
