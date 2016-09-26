@@ -1,4 +1,4 @@
-package Wireless::Client;
+package NetXML::Wireless::Client;
 
 use strict;
 use warnings;
@@ -11,7 +11,7 @@ require Exporter;
 our @EXPORT		= qw( new mac_address first_time last_time channel signal_to_noise_ratio_info type packet_fragments crypto_packets packet_retries data_packets llc_packets total_packets manufacturer number max_seen_rate );
 our @EXPORT_OK		= qw( );
 {
-	$Wireless::Client::VERSION = '0.0.1';
+	$NetXML::Wireless::Client::VERSION = '0.0.1';
 }
 
 my ($mac_address,$manufacturer,$max_seen_rate,$type,$channel,$first_time,$last_time,$number);

@@ -9,8 +9,8 @@ use Getopt::Long;
 use XML::Simple;
 
 use lib './';
-use Wireless::Client;
-use Wireless::Network;
+use NetXML::Wireless::Client;
+use NetXML::Wireless::Network;
 
 my ($help,$verbose,$input);
 $verbose = 0;
@@ -42,7 +42,7 @@ my $xdoc = XMLin($input);
 #}
 
 #print Dumper($xdoc->{'wireless-network'}[0]);
-my $wnet = Wireless::Network->new($xdoc->{'wireless-network'}[0]{'BSSID'}, $xdoc->{'wireless-network'}[0]{'SSID'}{'essid'}{'content'}, \%{$xdoc->{'wireless-network'}[0]});
+my $wnet = NetXML::Wireless::Network->new($xdoc->{'wireless-network'}[0]{'BSSID'}, $xdoc->{'wireless-network'}[0]{'SSID'}{'essid'}{'content'}, \%{$xdoc->{'wireless-network'}[0]});
 
 print Dumper($wnet);
 

@@ -9,8 +9,8 @@ use Getopt::Long;
 use XML::Simple;
 
 use lib './';
-use Wireless::Client;
-use Wireless::Network;
+use NetXML::Wireless::Client;
+use NetXML::Wireless::Network;
 
 my ($help,$verbose,$input);
 $verbose = 0;
@@ -33,7 +33,7 @@ if (ref($xdoc->{'wireless-network'}) eq 'ARRAY') {
 		if (ref($wnet->{'wireless-client'}) eq 'ARRAY') {
 			foreach my $wc ( @{$wnet->{'wireless-client'}} ) {
 				print Dumper($wc) if ($verbose);
-				my $wcli = Wireless::Client->new($wc->{'client-mac'}, $wc);
+				my $wcli = NetXML::Wireless::Client->new($wc->{'client-mac'}, $wc);
 				print Dumper($wcli) if ($verbose);
 				print "#" x 80; print "\n";
 				printf "%-40s %-s\n", "MAC Address:", $wcli->mac_address;
@@ -56,7 +56,7 @@ if (ref($xdoc->{'wireless-network'}) eq 'ARRAY') {
 			if (ref($wnet->{'wireless-client'}) eq 'HASH') {
 				print Dumper($wnet->{'wireless-client'}) if ($verbose);
 				#my $wcli = Wireless::Client->new($wnet->{'wireless-client'}{'client-mac'}, { number => $xdoc->{'wireless-network'}[0]{'wireless-client'}[0]{'number'}, type => $xdoc->{'wireless-network'}[0]{'wireless-client'}[0]{'type'} });
-				my $wcli = Wireless::Client->new($wnet->{'wireless-client'}{'client-mac'}, $wnet->{'wireless-client'});
+				my $wcli = NetXML::Wireless::Client->new($wnet->{'wireless-client'}{'client-mac'}, $wnet->{'wireless-client'});
 				print Dumper($wcli) if ($verbose);
 				print "#" x 80; print "\n";
 				printf "%-40s %-s\n", "MAC Address:", $wcli->mac_address;

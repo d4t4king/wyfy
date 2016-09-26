@@ -9,8 +9,8 @@ use Getopt::Long;
 use XML::Simple;
 
 use lib './';
-use Wireless::Client;
-use Wireless::Network;
+use NetXML::Wireless::Client;
+use NetXML::Wireless::Network;
 
 my ($help,$verbose,$input,$one);
 $verbose = 0; $one = 0;
@@ -38,9 +38,9 @@ if (ref($xdoc->{'wireless-network'}) eq 'ARRAY') {
 		}
 		my $wnet;
 		if (!defined($net->{'SSID'}{'essid'}{'content'})) {
-			$wnet = Wireless::Network->new($net->{'BSSID'}, "NONE", $net);
+			$wnet = NetXML::Wireless::Network->new($net->{'BSSID'}, "NONE", $net);
 		} else {
-			$wnet = Wireless::Network->new($net->{'BSSID'}, $net->{'SSID'}{'essid'}{'content'}, $net);
+			$wnet = NetXML::Wireless::Network->new($net->{'BSSID'}, $net->{'SSID'}{'essid'}{'content'}, $net);
 		}
 		if ($verbose) {
 			print color("bold magenta");

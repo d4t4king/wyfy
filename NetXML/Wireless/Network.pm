@@ -1,15 +1,15 @@
 
 ###############################################################################
-##									     ##
-##	Copyright (c) 2016 by Charlie Heselton				     ##
-##	All rights reserved.						     ##
-##									     ##
-##	This package is free doftware; you can redistribute it 		     ##
-##	and/or modify it under the same terms as Perl itself.		     ##
-##									     ##
+##																		     ##
+##	Copyright (c) 2016 by Charlie Heselton								     ##
+##	All rights reserved.						   							 ##
+##																		     ##
+##	This package is free doftware; you can redistribute it 				     ##
+##	and/or modify it under the same terms as Perl itself.				     ##
+##																		     ##
 ###############################################################################
 
-package Wireless::Network;
+package NetXML::Wireless::Network;
 
 
 =pod 
@@ -37,12 +37,12 @@ use Data::Dumper;
 require Exporter;
 
 use lib "../";
-use Wireless::Client;
+use NetXML::Wireless::Client;
 
 our @EXPORT		= qw( new first_time bssid last_time data_packets llc_packets retry_packets packet_fragments total_packets crypto_packets is_cloaked max_rate encryption type essid manufacturer number channel frequency signal_to_noise_ratio_info );
 our @EXPORT_OK	= qw( );
 {
-	$Wireless::Network::VERSION = '0.0.1';
+	$NetXML::Wireless::Network::VERSION = '0.0.1';
 }
 
 my %from_bool = (
@@ -79,7 +79,7 @@ sub new {
 				} elsif ($k eq 'wireless-client') {
 					if (ref($_[2]->{$k}) eq 'ARRAY') {
 						foreach my $wc ( @{$_[2]->{$k}} ) {
-							my $wcli = Wireless::Client->new($wc->{'client-mac'}, $wc);
+							my $wcli = NetXML::Wireless::Client->new($wc->{'client-mac'}, $wc);
 							#print color("bold green"); print Dumper($wcli); print color("reset");
 							push @{$self->{'clients'}}, $wcli;
 						}
