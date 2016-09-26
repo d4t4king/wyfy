@@ -9,7 +9,7 @@ use XML::Simple;
 use lib "./";
 use NetXML::Wireless::Network;
 
-our @EXPORT		=	qw( parsefile kismet_version network_count );
+our @EXPORT		=	qw( parsefile kismet_version network_count networks );
 our @EXPORT_OK	=	qw( );
 {
 	$NetXML::Parser::VERSION = '0.0.1';
@@ -65,4 +65,9 @@ sub network_count {
 sub kismet_version {
 	my $self = shift;
 	return $self->{'kistmet_version'};
+}
+
+sub networks {
+	my $self = shift;
+	return \@{$self->{'networks'}};
 }

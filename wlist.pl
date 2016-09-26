@@ -12,3 +12,7 @@ my $obj = NetXML::Parser->parsefile($ARGV[0]);
 
 #print Dumper($obj);
 print "Found ".$obj->network_count." networks.\n";
+
+foreach my $net ( sort @{$obj->networks} ) {
+	print $net->essid." has ".$net->client_count." clients.\n";
+}
