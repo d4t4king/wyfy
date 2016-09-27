@@ -3,7 +3,7 @@ package NetXML::Wireless::Card;
 use strict;
 use warnings;
 
-use Term::ANSIcolor;
+use Term::ANSIColor;
 use Data::Dumper;
 
 our @EXPORT		= 	qw( new );

@@ -38,7 +38,7 @@ if (ref($xdoc->{'wireless-network'}) eq 'ARRAY') {
 		}
 		my $wnet;
 		if (!defined($net->{'SSID'}{'essid'}{'content'})) {
-			$wnet = NetXML::Wireless::Network->new($net->{'BSSID'}, "NONE", $net);
+			$wnet = NetXML::Wireless::Network->new($net->{'BSSID'}, "Unknown", $net);
 		} else {
 			$wnet = NetXML::Wireless::Network->new($net->{'BSSID'}, $net->{'SSID'}{'essid'}{'content'}, $net);
 		}

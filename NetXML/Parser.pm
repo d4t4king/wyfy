@@ -8,6 +8,7 @@ use XML::Simple;
 
 use lib "./";
 use NetXML::Wireless::Network;
+use NetXML::Wireless::Card;
 
 our @EXPORT		=	qw( parsefile kismet_version network_count networks );
 our @EXPORT_OK	=	qw( );
