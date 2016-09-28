@@ -252,7 +252,7 @@ sub clients {
 		return [];
 	} else {
 		if (ref($self->{'clients'}) eq 'ARRAY') {			
-			return @{$self->{'clients'}};
+			return $self->{'clients'};
 		} else {
 			die colored("Client object not an array! \n", "bold red");
 		}

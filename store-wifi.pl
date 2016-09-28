@@ -66,7 +66,7 @@ if ( -e $input ) {
 						print colored("UPDATE networks SET last_updated='$last_updated' WHERE bssid='".$net->bssid."'\n", "green");
 						my $sth = $dbh->prepare("UPDATE networks SET last_updated='$last_updated' WHERE bssid='".$net->bssid."'") or die $DBI::errstr;
 						my $rtv = $sth->execute() or die $DBI::errstr;
-						print colored("UPDATE RTV: $rtv \n", "bold magenta");
+						print colored("UPDATE RTV: $rtv \n", "bold magenta") if ($verbose);
 						$sth->finish or die $DBI::errstr;
 					} else {
 						# update changes (?)
@@ -77,7 +77,7 @@ if ( -e $input ) {
 					my $date_found;
 					if ($first_seen =~ /(?:[a-zA-Z]+?) ([a-zA-Z]+?) (\d+) (\d+):(\d+):(\d+) (\d+)/) {
 						my $mon = $1; my $day = $2; my $H = $3; my $M = $4; my $S = $5; my $y = $6;
-						print "|$mon| $day $H $M $S $y \n";
+						print "|$mon| $day $H $M $S $y \n" if (($verbose) and ($verbose > 1));
 						$mon = $mon2num{$mon};
 						$date_found = "$y/$mon/$day $H:$M:$S";
 					} else {
@@ -86,8 +86,40 @@ if ( -e $input ) {
 					print "INSERT INTO networks (bssid,essid,date_found,last_updated,num_clients,encryption,max_rate,type,channel,manufacturer,cloaked,frequency) VALUES ('".$net->bssid."','".$net->essid."','$date_found','$last_updated','".$net->client_count."','".$net->encryption."','".$net->max_rate."','".$net->type."','".$net->channel."','".$net->manufacturer."','".$net->is_cloaked."','".$net->frequency."');\n";
 					my $sth = $dbh->prepare("INSERT INTO networks (bssid,essid,date_found,last_updated,num_clients,encryption,max_rate,type,channel,manufacturer,cloaked,frequency) VALUES ('".$net->bssid."','".$net->essid."','$date_found','$last_updated','".$net->client_count."','".$net->encryption."','".$net->max_rate."','".$net->type."','".$net->channel."','".$net->manufacturer."','".$net->is_cloaked."','".$net->frequency."');") or die $DBI::errstr;
 					my $rtv = $sth->execute() or die $DBI::errstr;
-					print colored("INSERT RTV: $rtv \n", "bold yellow");
+					print colored("INSERT RTV: $rtv \n", "bold yellow") if ($verbose);
 					$sth->finish;
+				}
+				my $net_id = &get_net_id($net->bssid);
+				if ($net->client_count > 0) {
+					if (defined($net->clients)) {
+						#if (ref($net->clients) eq 'ARRAY') {
+							foreach my $client ( @{$net->clients} ) {
+								if (exists($db_clients{$client->mac_address})) {
+									if (&client_record_verified($client)) {
+										print colored("UPDATE clients SET last_updated='$last_updated' WHERE mac_address='".$client->mac_address."'\n", "green");
+									} else {
+										# update changes (?)
+									}
+								} else {
+									my $first_seen_c = $client->first_time;
+									my $date_found_c;
+									if ($first_seen_c =~ /(?:[a-zA-Z]+?) ([a-zA-Z]+?) (\d+) (\d+):(\d+):(\d+) (\d+)/) {
+										my $mon = $1; my $day = $2; my $H = $3; my $M = $4; my $S = $5; my $y = $6;
+										print "|$mon| $day $H $M $S $y \n" if (($verbose) and ($verbose > 1));
+										$mon = $mon2num{$mon};
+										$date_found_c = "$y/$mon/$day $H:$M:$S";
+									} else {
+										die colored("Didn't match date string ($first_seen_c) ", "bold red");
+									}
+								}
+								print "INSERT INTO clients (mac_address,type,manufacturer,channel) VALUES ('".$client->mac_address."','".$client->type."','".$client->manufacturer."','".$client->channel."'\n";
+							}
+						#} else {
+						#	warn colored("Network clients property not an array! (".ref($net->clients)."). Client count: ".$net->client_count.".", "bold red");
+						#	print Dumper($net->clients);
+						#	exit 1;
+						#}
+					}
 				}
 			}
 		}
@@ -98,7 +130,7 @@ if ( -e $input ) {
 	die colored("Specified input file does not exist ", "bold red");
 }
 
-print Dumper(\%db_networks);
+#print Dumper(\%db_networks);
 
 ###############################################################################
 # Subs
@@ -132,10 +164,25 @@ sub record_verified {
 	my $n = shift;
 	my $sql = "SELECT id FROM networks WHERE bssid='".$n->bssid."' AND essid='".$n->essid."' AND manufacturer='".$n->manufacturer."' AND encryption='".$n->encryption."' AND channel='".$n->channel."'";
 	my $dbh	= DBI->connect($dsn, $user, $pass);
-	my $sth = $dbh->prepare($sql) or die $DBI::errstr;
-	my $rtv = $sth->execute() or die $DBI::errstr;
-	print colored("VERIFY RTV: $rtv \n", "yellow");
-	$sth->finish or die $DBI::errstr;
+	#my $sth = $dbh->prepare($sql) or die $DBI::errstr;
+	#my $rtv = $sth->execute() or die $DBI::errstr;
+	#print colored("VERIFY RTV: $rtv \n", "yellow") if ($verbose);
+	my $net_id = $dbh->selectrow_array($sql);
+	#$sth->finish or die $DBI::errstr;
 	$dbh->disconnect;
+	if ((defined($net_id)) and ($net_id != 0)) {
+		return 1;
+	} else {
+		return 0;
+	}
 }
-	
+
+sub get_net_id {
+	my $bssid = shift;
+	my $sql = "SELECT id FROM networks WHERE bssid='".$bssid."';";
+	my $dbh	= DBI->connect($dsn, $user, $pass);
+	my $net_id = $dbh->selectrow_array($sql);
+	$dbh->disconnect;
+	return $net_id;
+}	
+
