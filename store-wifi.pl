@@ -25,11 +25,13 @@ die colored("Need an input file.  Try the -i option.", "bold red") if ((!defined
 die colored("Need the database password.  Use -p ", "bold red") if ((!defined($pw)) or ($pw eq ""));
 
 my (%db_networks, %db_clients);
+&get_networks();
+
 my $database	=	"wireless";
 my $dbhost	=	"192.168.1.50";
-my $dsn		=	"DBI:mysql:database=$database;host=$dbhost";
-my $user	=	"root";
-my $pass	=	"$pw";
+our $dsn	=	"DBI:mysql:database=$database;host=$dbhost";
+our $user	=	"root";
+our $pass	=	"$pw";
 
 my %mon2num;
 $mon2num{'Jan'} = '01';
@@ -79,6 +81,8 @@ if ( -e $input ) {
 	die colored("Specified input file does not exist ", "bold red");
 }
 
+print Dumper(\%db_networks);
+
 ###############################################################################
 # Subs
 ###############################################################################
@@ -94,4 +98,13 @@ sub pad_zero {
 	my $n = shift;
 	if ($n < 10) { return "0$n"; }
 	else { return $n; }
+}
+
+sub get_networks {
+	my $dbh	= DBI->connect($dsn, $user, $pass);
+	my $sth = $dbh->prepare("SELECT distinct bssid FROM networks");
+	$sth->execute();
+	while (my @row = $sth->fetchrow_array()) {
+		$db_networks{$row[0]}++;
+	}
 }
