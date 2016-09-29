@@ -178,7 +178,7 @@ if ( -e $input ) {
 }
 
 #print Dumper(\%db_networks);
-print Dumper(\%db_clients);
+#print Dumper(\%db_clients);
 
 ###############################################################################
 # Subs
