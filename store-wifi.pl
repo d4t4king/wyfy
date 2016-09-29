@@ -85,7 +85,14 @@ if ( -e $input ) {
 					} else {
 						die colored("Didn't match date string ($first_seen) ", "bold red");
 					}
-					my $netsql = "INSERT INTO networks (bssid,essid,date_found,last_updated,num_clients,encryption,max_rate,type,channel,manufacturer,cloaked,frequency) VALUES ('".$net->bssid."','".$net->essid."','$date_found','$last_updated','".$net->client_count."','".$net->encryption."','".$net->max_rate."','".$net->type."','".$net->channel."','".$net->manufacturer."','".$net->is_cloaked."','".$net->frequency."')";
+					my $netsql = "";
+					if ($net->essid =~ /\\/) {
+						my $tmpessid = $net->essid;
+						$tmpessid =~ s/\\/\\\\/g;
+						$netsql = "INSERT INTO networks (bssid,essid,date_found,last_updated,num_clients,encryption,max_rate,type,channel,manufacturer,cloaked,frequency) VALUES ('".$net->bssid."','".$tmpessid."','$date_found','$last_updated','".$net->client_count."','".$net->encryption."','".$net->max_rate."','".$net->type."','".$net->channel."','".$net->manufacturer."','".$net->is_cloaked."','".$net->frequency."')";
+					} else {
+						$netsql = "INSERT INTO networks (bssid,essid,date_found,last_updated,num_clients,encryption,max_rate,type,channel,manufacturer,cloaked,frequency) VALUES ('".$net->bssid."','".$net->essid."','$date_found','$last_updated','".$net->client_count."','".$net->encryption."','".$net->max_rate."','".$net->type."','".$net->channel."','".$net->manufacturer."','".$net->is_cloaked."','".$net->frequency."')";
+					}
 					print "$netsql \n";
 					my $sth = $dbh->prepare($netsql) or die $DBI::errstr;
 					my $rtv = $sth->execute() or die $DBI::errstr;
