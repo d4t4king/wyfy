@@ -29,8 +29,12 @@ sub parsefile {
 				'start_time'		=>	$xdoc->{'start-time'}
 			};
 			if (exists($xdoc->{'card-source'})) {
-				my $card = NetXML::Wireless::Card->new($xdoc->{'card-source'}{'uuid'}, $xdoc->{'card-source'});
-				$self->{'source-card'} = $card;
+				if (ref($xdoc->{'card-source'}) eq 'HASH') {
+					my $card = NetXML::Wireless::Card->new($xdoc->{'card-source'}{'uuid'}, $xdoc->{'card-source'});
+					$self->{'source-card'} = $card;
+				} else {
+					warn colored("card source object not a hash!", "yellow");
+				}
 			}
             if (ref($xdoc->{'wireless-network'}) eq 'ARRAY') {
                 foreach my $net ( @{$xdoc->{'wireless-network'}} ) {
