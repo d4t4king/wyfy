@@ -219,11 +219,17 @@ sub crypto_packets {
 
 sub encryption {
 	my $self = shift;
+	my @arr = ();
 	if (exists($self->{'SSID'}{'encryption'})) {
-		return $self->{'SSID'}{'encryption'};
+		if (ref($self->{'SSID'}{'encryption'}) eq 'ARRAY') {
+			@arr = @{$self->{'SSID'}{'encryption'}};
+		} else {
+			push @arr, $self->{'SSID'}{'encryption'};
+		}
 	} else {
-		return "Unknown";
+		push @arr, "Unknown";
 	}
+	return \@arr;
 }
 
 sub max_rate {
