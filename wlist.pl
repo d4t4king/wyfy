@@ -4,12 +4,22 @@ use strict;
 use warnings;
 use Term::ANSIColor;
 use Data::Dumper;
+use Getopt::Long;
+my ($help, $verbose, $input);
+# need to standardize a little to present a unified interface
+GetOptions(
+	'h|help'		=>	\$help,
+	'v|verbose+'	=>	\$verbose,
+	'i|input=s'		=>	\$input,
+);
 
 use lib "./";
 use NetXML::Parser;
 
-if ((!defined($ARGV[0])) or ($ARGV[0] eq '')) {
-	die "You must specify an input file that is netxml format from kismet or related tools.";
+&usage() if ($help);
+if ((!defined($input)) or ($input eq '')) {
+	print "You must specify an input file that is netxml format from kismet or related tools.";
+	&usage();
 }
 
 my $obj = NetXML::Parser->parsefile($ARGV[0]);
@@ -35,4 +45,25 @@ foreach my $net ( sort @{$obj->networks} ) {
 			printf "%9d\t%-18s\t%6d\t%-15s\n", $clid, $clients{$clid}->mac_address, $clients{$clid}->channel, $clients{$clid}->manufacturer;
 		}
 	}
+}
+
+##########################################################
+# Subs
+##########################################################
+sub usage {
+	print <<EOS;
+
+Simply displays information about wireless network data found
+in a netxml file from Kismet or airodump-ng.
+
+Usage:
+$0 -hv -i <file>
+
+-h|--help		Displays this message then quits.
+-v|--verbose		Increase output verbosity.
+-i|--input		Specifies the full path to the input file.
+
+EOS
+	
+	exit 0;
 }

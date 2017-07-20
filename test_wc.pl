@@ -115,6 +115,8 @@ sub usage {
 
 	print <<END;
 
+Tests the NetXML::Wireless::Client objects
+
 $0 [-h|--help] [-v|--verbose] [-i|--input] <input_file>
 
 Where:

@@ -21,6 +21,7 @@ GetOptions(
 	'p|pass=s'	=>	\$pw,
 );
 
+&usage() if ($help);
 if ((!defined($input)) or ($input eq "")) {
 	print colored("Need an input file.  Try the -i option.", "bold red");
 	&usage();
@@ -29,7 +30,6 @@ if ((!defined($pw)) or ($pw eq "")) {
 	print colored("Need the database password.  Use -p ", "bold red");
 	&usage();
 }
-if ($help) { &usage(); }
 
 my $database	=	"wireless";
 my $dbhost		=	"192.168.1.50";
