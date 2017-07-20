@@ -84,7 +84,7 @@ if ( -e $input ) {
 					my $first_seen = $net->first_time;
 					#Thu Sep 22 23:18:01 2016
 					my $date_found;
-					if ($first_seen =~ /(?:[a-zA-Z]+?) ([a-zA-Z]+?) (\d+) (\d+):(\d+):(\d+) (\d+)/) {
+					if ($first_seen =~ /(?:[a-zA-Z]+?) ([a-zA-Z]+?)  ?(\d+) (\d+):(\d+):(\d+) (\d+)/) {
 						my $mon = $1; my $day = $2; my $H = $3; my $M = $4; my $S = $5; my $y = $6;
 						print "|$mon| $day $H $M $S $y \n" if (($verbose) and ($verbose > 1));
 						$mon = $mon2num{$mon};
@@ -125,7 +125,7 @@ if ( -e $input ) {
 									#exit 1;
 									my $first_seen_c = $client->first_time;
 									my $date_found_c;
-									if ($first_seen_c =~ /(?:[a-zA-Z]+?) ([a-zA-Z]+?) (\d+) (\d+):(\d+):(\d+) (\d+)/) {
+									if ($first_seen_c =~ /(?:[a-zA-Z]+?) ([a-zA-Z]+?)  ?(\d+) (\d+):(\d+):(\d+) (\d+)/) {
 										my $mon = $1; my $day = $2; my $H = $3; my $M = $4; my $S = $5; my $y = $6;
 										print "|$mon| $day $H $M $S $y \n" if (($verbose) and ($verbose > 1));
 										$mon = $mon2num{$mon};
@@ -145,7 +145,7 @@ if ( -e $input ) {
 							} else {
 								my $first_seen_c = $client->first_time;
 								my $date_found_c;
-								if ($first_seen_c =~ /(?:[a-zA-Z]+?) ([a-zA-Z]+?) (\d+) (\d+):(\d+):(\d+) (\d+)/) {
+								if ($first_seen_c =~ /(?:[a-zA-Z]+?) ([a-zA-Z]+?)  ?(\d+) (\d+):(\d+):(\d+) (\d+)/) {
 									my $mon = $1; my $day = $2; my $H = $3; my $M = $4; my $S = $5; my $y = $6;
 									print "|$mon| $day $H $M $S $y \n" if (($verbose) and ($verbose > 1));
 									$mon = $mon2num{$mon};
