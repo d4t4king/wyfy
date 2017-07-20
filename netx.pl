@@ -53,6 +53,8 @@ sub usage {
 
 	print <<END;
 
+Dumps NetXML::Wireless::Network objects in input file.
+
 $0 [-h|--help] [-v|--verbose] [-i|--input] <input_file>
 
 Where:
