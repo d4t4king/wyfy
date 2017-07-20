@@ -21,8 +21,15 @@ GetOptions(
 	'p|pass=s'	=>	\$pw,
 );
 
-die colored("Need an input file.  Try the -i option.", "bold red") if ((!defined($input)) or ($input eq ""));
-die colored("Need the database password.  Use -p ", "bold red") if ((!defined($pw)) or ($pw eq ""));
+if ((!defined($input)) or ($input eq "")) {
+	print colored("Need an input file.  Try the -i option.", "bold red");
+	&usage();
+} 
+if ((!defined($pw)) or ($pw eq "")) {
+	print colored("Need the database password.  Use -p ", "bold red");
+	&usage();
+}
+if ($help) { &usage(); }
 
 my $database	=	"wireless";
 my $dbhost		=	"192.168.1.50";
@@ -184,6 +191,23 @@ if ( -e $input ) {
 # Subs
 ###############################################################################
 sub usage {
+	print <<EOS;
+
+Just like it sounds, this script stores discovered wireless data to a 
+preconfigured mysql database.
+
+Usage:
+
+$0 -hv -i <input> -p <pass>
+
+-h|--help		DIsplay this useful message then quit.
+-v|--verbose		Increase output verbosity.
+-i|--input		Specify the path to the input file.  Expects netxml from either airodump-ng or kismet.
+-p|--pass		The password for the database.
+
+EOS
+
+	exit 0;
 
 }
 
