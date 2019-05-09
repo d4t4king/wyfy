@@ -1,7 +1,7 @@
 # wyfy
 Just some scripts I cobbled together for various things related to wifi analysis.
 
-Most of these are wrappers for harnessing and manipulating the data collected and output by the aircrack-ng and kismet\* quite of tools.  So, you'll want to make sure that you have them installed.
+Most of these are wrappers for harnessing and manipulating the data collected and output by the aircrack-ng and kismet\* suite of tools.  So, you'll want to make sure that you have them installed.
 
 ### Getting Started
 Most "modern" linux distributions should have these tools available in whatever package manager repo they use: apt for Debian/Ubuntu based derivatives, rpm/yum for RedHat/CentOS, etc.
